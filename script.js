@@ -5436,9 +5436,8 @@ let OBLIGATIONS = {
                 12
             ]
         }
-    ]
-},
-  },
+    ],
+    "CA": [
       {
         id: "ca-payroll",
         title: "California — Payroll Withholding (EDD)",
