@@ -27,6 +27,7 @@ let OBLIGATIONS = {
       frequency: "Anual",
       due: "15º dia do 4º mês após o término do ano fiscal",
       who: "Corporations (C-Corp)",
+      companyTypes: ["C-Corp"],
       links: [
         { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
         { label: "Formulário", url: "https://www.irs.gov/pub/irs-pdf/f1120.pdf" }
@@ -38,6 +39,7 @@ let OBLIGATIONS = {
       frequency: "Anual",
       due: "15º dia do 3º mês após o término do ano fiscal",
       who: "Parcerias (LLC tratada como partnership)",
+      companyTypes: ["Partnership", "LLC"],
       links: [
         { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-form-1065" },
         { label: "Formulário", url: "https://www.irs.gov/pub/irs-pdf/f1065.pdf" }
@@ -49,6 +51,7 @@ let OBLIGATIONS = {
       frequency: "Trimestral",
       due: "Último dia do mês após o fim do trimestre (Jan–Mar: 30/04, etc.)",
       who: "Empregadores com retenção de payroll federal",
+      companyTypes: ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"],
       links: [
         { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-form-941" },
         { label: "E-file", url: "https://www.irs.gov/payments" }
@@ -60,6 +63,7 @@ let OBLIGATIONS = {
       frequency: "Anual",
       due: "31 de janeiro (ou 10 de fevereiro se todos os depósitos foram pontuais)",
       who: "Empregadores sujeitos a FUTA",
+      companyTypes: ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"],
       links: [
         { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-form-940" }
       ]
@@ -70,8 +74,54 @@ let OBLIGATIONS = {
       frequency: "Anual",
       due: "Envio a receptores até 31 de janeiro; e-file IRS até 31 de março (variável)",
       who: "Pagadores a contratados/juros/dividendos etc.",
+      companyTypes: ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship", "Contractor"],
       links: [
         { label: "Visão geral", url: "https://www.irs.gov/forms-pubs/about-form-1099-misc" }
+      ]
+    },
+    {
+      id: "irs-1120s",
+      title: "IRS Form 1120-S — U.S. Income Tax Return for an S Corporation",
+      frequency: "Anual",
+      due: "15º dia do 3º mês após o término do ano fiscal",
+      who: "S-Corporations",
+      companyTypes: ["S-Corp"],
+      links: [
+        { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-form-1120s" },
+        { label: "Formulário", url: "https://www.irs.gov/pub/irs-pdf/f1120s.pdf" }
+      ]
+    },
+    {
+      id: "irs-1120s-k1",
+      title: "IRS Form 1120-S Schedule K-1 — Shareholder's Share of Income",
+      frequency: "Anual",
+      due: "Envio aos acionistas até 15º dia do 3º mês após fim do ano fiscal",
+      who: "S-Corporations (para acionistas)",
+      companyTypes: ["S-Corp"],
+      links: [
+        { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-form-1120s" }
+      ]
+    },
+    {
+      id: "irs-1040-schedule-c",
+      title: "IRS Form 1040 Schedule C — Profit or Loss from Business",
+      frequency: "Anual",
+      due: "15 de abril (ou prorrogação até 15 de outubro)",
+      who: "Sole Proprietorships e atividades comerciais",
+      companyTypes: ["Sole Proprietorship"],
+      links: [
+        { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-schedule-c-form-1040" }
+      ]
+    },
+    {
+      id: "irs-990",
+      title: "IRS Form 990 — Return of Organization Exempt From Income Tax",
+      frequency: "Anual",
+      due: "15º dia do 5º mês após o fim do ano fiscal",
+      who: "Organizações isentas de impostos",
+      companyTypes: ["Non-Profit"],
+      links: [
+        { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-form-990" }
       ]
     }
   ],
@@ -83,6 +133,7 @@ let OBLIGATIONS = {
         frequency: "Mensal/Trimestral/Anual (conforme volume)",
         due: "Geralmente último dia do mês seguinte",
         who: "Varejistas e vendedores sujeitos a sales/use tax",
+        companyTypes: ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship"],
         links: [
           { label: "CDTFA eFile", url: "https://onlineservices.cdtfa.ca.gov/" },
           { label: "Guia", url: "https://www.cdtfa.ca.gov/taxes-and-fees/sut-programs.htm" }
@@ -94,6 +145,7 @@ let OBLIGATIONS = {
         frequency: "Mensal/Quinzenal/Outro (segundo cadastro)",
         due: "Conforme calendário EDD",
         who: "Empregadores com retenção estadual",
+        companyTypes: ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"],
         links: [
           { label: "EDD e-Services", url: "https://edd.ca.gov/en/e-Services_for_Business/" }
         ]
@@ -106,6 +158,7 @@ let OBLIGATIONS = {
         frequency: "Mensal/Trimestral/Anual",
         due: "Conforme calendário do NYS",
         who: "Vendedores com nexus em NY",
+        companyTypes: ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship"],
         links: [
           { label: "File", url: "https://www.tax.ny.gov/online/" }
         ]
@@ -116,6 +169,7 @@ let OBLIGATIONS = {
         frequency: "Mensal/Trimestral",
         due: "Conforme atribuição",
         who: "Empregadores em NY",
+        companyTypes: ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"],
         links: [
           { label: "Guia", url: "https://www.tax.ny.gov/bus/emp/withhold.htm" }
         ]
@@ -128,6 +182,7 @@ let OBLIGATIONS = {
         frequency: "Mensal/Trimestral/Anual",
         due: "20º dia do mês seguinte (geral)",
         who: "Vendedores em TX",
+        companyTypes: ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship"],
         links: [
           { label: "Webfile", url: "https://comptroller.texas.gov/taxes/file-pay/webfile/" }
         ]
@@ -180,6 +235,7 @@ function getFilteredObligations() {
   const query = document.getElementById("searchInput").value.trim().toLowerCase();
   const county = (document.getElementById("countyInput")?.value || '').trim().toLowerCase();
   const city = (document.getElementById("cityInput")?.value || '').trim().toLowerCase();
+  const companyType = document.getElementById("companyTypeSelect").value;
 
   const result = [];
   if (includeFederal) {
@@ -205,6 +261,14 @@ function getFilteredObligations() {
   }
   if (city) {
     filtered = filtered.filter(o => (o.city || '').toLowerCase().includes(city));
+  }
+  if (companyType && companyType !== "ALL") {
+    filtered = filtered.filter(o => {
+      if (!o.companyTypes || !Array.isArray(o.companyTypes)) {
+        return true; // Se não há tipos especificados, mostrar para todos
+      }
+      return o.companyTypes.includes(companyType);
+    });
   }
 
   return filtered;
@@ -361,7 +425,7 @@ function renderLocals() {
 function exportToCSV() {
   const list = getFilteredObligations();
   const rows = [
-    ["Escopo", "Estado", "Título", "Frequência", "Vencimento", "Quem", "Links"],
+    ["Escopo", "Estado", "Título", "Frequência", "Vencimento", "Quem", "Tipos de Empresa", "Links"],
     ...list.map(o => [
       o.scope,
       o.state || "",
@@ -369,6 +433,7 @@ function exportToCSV() {
       o.frequency || "",
       o.due || "",
       o.who || "",
+      (o.companyTypes || []).join(", "),
       (o.links || []).map(l => `${l.label}: ${l.url}`).join(" | ")
     ])
   ];
@@ -385,6 +450,7 @@ function bindEvents() {
   document.getElementById("filterFederal").addEventListener("change", renderObligations);
   document.getElementById("filterState").addEventListener("change", renderObligations);
   document.getElementById("searchInput").addEventListener("input", renderObligations);
+  document.getElementById("companyTypeSelect").addEventListener("change", renderObligations);
   const countyInput = document.getElementById('countyInput');
   const cityInput = document.getElementById('cityInput');
   if (countyInput) countyInput.addEventListener('input', renderObligations);
@@ -394,6 +460,7 @@ function bindEvents() {
     document.getElementById("filterState").checked = true;
     document.getElementById("searchInput").value = "";
     document.getElementById("stateSelect").value = "ALL";
+    document.getElementById("companyTypeSelect").value = "ALL";
     if (countyInput) countyInput.value = '';
     if (cityInput) cityInput.value = '';
     renderObligations();
