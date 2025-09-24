@@ -5499,6 +5499,8 @@ async function loadObligationsJSON() {
     
     if (isGitHubPages) {
       console.log("GitHub Pages detectado - usando dados embutidos");
+      console.log("Dados federais embutidos:", OBLIGATIONS.federal.length);
+      console.log("Estados embutidos:", Object.keys(OBLIGATIONS.states).length);
       return;
     }
     
@@ -5523,12 +5525,18 @@ async function loadObligationsJSON() {
 }
 
 function populateStateSelect() {
+  console.log("populateStateSelect chamada");
   const select = document.getElementById("stateSelect");
+  if (!select) {
+    console.error("Elemento stateSelect não encontrado!");
+    return;
+  }
   select.innerHTML = "";
   const optAll = document.createElement("option");
   optAll.value = "ALL";
   optAll.textContent = "Todos os Estados";
   select.appendChild(optAll);
+  console.log("STATES array:", STATES.length, "estados");
   STATES.forEach(s => {
     const opt = document.createElement("option");
     opt.value = s.code;
@@ -5536,6 +5544,7 @@ function populateStateSelect() {
     select.appendChild(opt);
   });
   select.value = "ALL";
+  console.log("Estado select populado com", select.options.length, "opções");
 }
 
 function getFilteredObligations() {
