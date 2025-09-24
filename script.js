@@ -132,6 +132,19 @@ let OBLIGATIONS = {
       links: [
         { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-form-990" }
       ]
+    },
+    {
+      id: "boir",
+      title: "FinCEN — Beneficial Ownership Information Reporting (BOIR)",
+      frequency: "Evento (inicial e alterações)",
+      due: "Inicial: até 30 dias após formação (entidades novas desde 2024); alterações: 30 dias",
+      who: "Reporting Companies conforme CTA",
+      companyTypes: ["C-Corp", "S-Corp", "LLC", "Partnership"],
+      months: [], // Eventual
+      links: [
+        { label: "FinCEN BOI", url: "https://www.fincen.gov/boi" },
+        { label: "e-Filing", url: "https://boiefiling.fincen.gov/" }
+      ]
     }
   ],
   states: {
@@ -204,12 +217,22 @@ let OBLIGATIONS = {
 
 async function loadObligationsJSON() {
   try {
+    // Verifica se estamos no GitHub Pages (sem servidor backend)
+    const isGitHubPages = window.location.hostname.includes('github.io') || 
+                         window.location.hostname.includes('github.com');
+    
+    if (isGitHubPages) {
+      console.log("GitHub Pages detectado - usando dados embutidos");
+      return;
+    }
+    
     const res = await fetch("/api/obligations", { cache: "no-cache" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     if (data && typeof data === "object") {
       if (Array.isArray(data.federal)) {
         OBLIGATIONS.federal = data.federal;
+        console.log(`Carregadas ${data.federal.length} obrigações federais do servidor`);
       }
       if (data.states && typeof data.states === "object") {
         OBLIGATIONS.states = data.states;
@@ -219,7 +242,7 @@ async function loadObligationsJSON() {
       }
     }
   } catch (e) {
-    console.warn("Usando dados embutidos. Falha ao carregar data/obligations.json:", e);
+    console.warn("Usando dados embutidos. Falha ao carregar API:", e.message);
   }
 }
 
