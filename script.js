@@ -5501,6 +5501,7 @@ async function loadObligationsJSON() {
       console.log("GitHub Pages detectado - usando dados embutidos");
       console.log("Dados federais embutidos:", OBLIGATIONS.federal.length);
       console.log("Estados embutidos:", Object.keys(OBLIGATIONS.states).length);
+      console.log("Timestamp:", new Date().toISOString());
       return;
     }
     
