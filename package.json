@@ -1,0 +1,20 @@
+{
+  "name": "obligations-irs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aplicação Web de obrigações tributárias IRS e estaduais com API",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "build": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "better-sqlite3": "^9.4.5",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
+

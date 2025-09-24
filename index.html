@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Obrigações Tributárias - IRS e Estados</title>
+    <meta name="description" content="Aplicação para visualizar obrigações tributárias federais (IRS) e estaduais por estado norte-americano." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">IRS</div>
+          <span class="brand-name">Obrigações Tributárias EUA</span>
+        </div>
+        <nav class="nav">
+          <a href="#obrigacoes">Obrigações</a>
+          <a href="#faq">Perguntas Frequentes</a>
+        </nav>
+        <div class="cta">
+          <button id="exportCsvBtn" class="btn btn-outline">Exportar CSV</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-inner">
+          <div class="hero-copy">
+            <h1>Mapeie obrigações do <span class="highlight">IRS</span> e do seu <span class="highlight">Estado</span></h1>
+            <p class="subtitle">Selecione seu estado para ver obrigações federais e estaduais, prazos e periodicidades.</p>
+            <div class="controls">
+              <div class="control-group">
+                <label for="stateSelect">Selecione o Estado</label>
+                <select id="stateSelect" class="select"></select>
+              </div>
+              <div class="control-group inline">
+                <label class="checkbox">
+                  <input type="checkbox" id="filterFederal" checked />
+                  <span>Federal (IRS)</span>
+                </label>
+                <label class="checkbox">
+                  <input type="checkbox" id="filterState" checked />
+                  <span>Estadual</span>
+                </label>
+              </div>
+              <div class="control-group">
+                <label for="searchInput">Buscar obrigação</label>
+                <input id="searchInput" class="input" type="search" placeholder="Ex.: Form 1120, payroll, sales tax" />
+              </div>
+              <div class="control-group">
+                <label for="countyInput">Filtrar por Condado (quando aplicável)</label>
+                <input id="countyInput" class="input" type="search" placeholder="Ex.: Los Angeles County" />
+              </div>
+              <div class="control-group">
+                <label for="cityInput">Filtrar por Cidade (quando aplicável)</label>
+                <input id="cityInput" class="input" type="search" placeholder="Ex.: New York City" />
+              </div>
+            </div>
+            <div class="meta">
+              <div class="badge">Atualizado</div>
+              <div class="stat"><span id="countFederal">0</span> federais</div>
+              <div class="stat"><span id="countState">0</span> estaduais</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+      <section id="obrigacoes" class="section alt">
+        <div class="container">
+          <div class="section-header">
+            <h2>Obrigações</h2>
+            <div class="section-actions">
+              <div class="view-toggle" role="tablist" aria-label="Alternar visualização">
+                <button id="viewListBtn" type="button" class="btn btn-soft" aria-selected="true">Lista</button>
+                <button id="viewCalendarBtn" type="button" class="btn btn-soft" aria-selected="false">Calendário</button>
+              </div>
+              <button id="clearFiltersBtn" class="btn btn-soft">Limpar filtros</button>
+            </div>
+          </div>
+          <div id="obligationsList" class="obligations-list"></div>
+          <div id="obligationsCalendar" class="obligations-calendar" hidden></div>
+        </div>
+      </section>
+
+      <section id="sporadic" class="section">
+        <div class="container">
+          <div class="section-header">
+            <h2>Obrigações Esporádicas</h2>
+          </div>
+          <p class="subtitle">Obrigações sem data fixa, acionadas por eventos específicos (ex.: abertura de empresa, alterações societárias, BOIR, etc.).</p>
+          <div id="sporadicList" class="obligations-list"></div>
+        </div>
+      </section>
+
+      <section id="locals" class="section alt">
+        <div class="container">
+          <div class="section-header">
+            <h2>Obrigações Municipais e de Condados</h2>
+          </div>
+          <p class="subtitle">Itens locais relacionados ao estado selecionado, filtráveis por condado e cidade.</p>
+          <div id="localsList" class="obligations-list"></div>
+        </div>
+      </section>
+
+      <section id="faq" class="section">
+        <div class="container">
+          <h2>Perguntas Frequentes</h2>
+          <details class="faq">
+            <summary>Os dados estão completos para os 50 estados?</summary>
+            <p>Incluímos dados federais e exemplos de estados principais. Você pode estender facilmente o arquivo de dados para cobrir todos os estados.</p>
+          </details>
+          <details class="faq">
+            <summary>Qual a fonte das cores e estilo?</summary>
+            <p>A UI foi inspirada no template, paleta e tipografia do site de referência <a href="https://h7contabil.com.br/" target="_blank" rel="noreferrer noopener">H7 Contábil</a>.</p>
+          </details>
+          <details class="faq">
+            <summary>Posso exportar a lista?</summary>
+            <p>Sim. Use o botão Exportar CSV no topo para baixar as obrigações filtradas.</p>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>© <span id="year"></span> Obrigações Tributárias EUA — IRS e Estados</p>
+        <p class="credits">UI inspirada no template de <a href="https://h7contabil.com.br/" target="_blank" rel="noreferrer noopener">H7 Contábil</a>.</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+  </html>
+
+
