@@ -559,26 +559,7 @@ function init() {
   bindEvents();
   loadObligationsJSON().then(() => {
     renderObligations();
-    // Teste do filtro de tipo de empresa
-    testCompanyTypeFilter();
   });
-}
-
-function testCompanyTypeFilter() {
-  console.log("=== TESTE DO FILTRO DE TIPO DE EMPRESA ===");
-  
-  // Testar com LLC
-  document.getElementById("companyTypeSelect").value = "LLC";
-  const llcResults = getFilteredObligations();
-  console.log("Resultados para LLC:", llcResults.length, llcResults.map(o => o.title));
-  
-  // Testar com C-Corp
-  document.getElementById("companyTypeSelect").value = "C-Corp";
-  const cCorpResults = getFilteredObligations();
-  console.log("Resultados para C-Corp:", cCorpResults.length, cCorpResults.map(o => o.title));
-  
-  // Voltar para todos
-  document.getElementById("companyTypeSelect").value = "ALL";
 }
 
 document.addEventListener("DOMContentLoaded", init);
