@@ -248,8 +248,6 @@ function getFilteredObligations() {
   const city = (document.getElementById("cityInput")?.value || '').trim().toLowerCase();
   const companyTypeSelect = document.getElementById("companyTypeSelect");
   const companyType = companyTypeSelect ? companyTypeSelect.value : "ALL";
-  
-  console.log("Valores dos filtros:", { state, includeFederal, includeState, query, county, city, companyType });
 
   const result = [];
   if (includeFederal) {
@@ -277,15 +275,11 @@ function getFilteredObligations() {
     filtered = filtered.filter(o => (o.city || '').toLowerCase().includes(city));
   }
   if (companyType && companyType !== "ALL") {
-    console.log("Filtrando por tipo de empresa:", companyType);
     filtered = filtered.filter(o => {
       if (!o.companyTypes || !Array.isArray(o.companyTypes)) {
-        console.log("Obrigação sem tipos:", o.title);
-        return true; // Se não há tipos especificados, mostrar para todos
+        return false; // Se não há tipos especificados, não mostrar
       }
-      const hasType = o.companyTypes.includes(companyType);
-      console.log(`Obrigação: ${o.title}, Tipos: ${o.companyTypes.join(", ")}, Inclui ${companyType}: ${hasType}`);
-      return hasType;
+      return o.companyTypes.includes(companyType);
     });
   }
 
@@ -565,7 +559,26 @@ function init() {
   bindEvents();
   loadObligationsJSON().then(() => {
     renderObligations();
+    // Teste do filtro de tipo de empresa
+    testCompanyTypeFilter();
   });
+}
+
+function testCompanyTypeFilter() {
+  console.log("=== TESTE DO FILTRO DE TIPO DE EMPRESA ===");
+  
+  // Testar com LLC
+  document.getElementById("companyTypeSelect").value = "LLC";
+  const llcResults = getFilteredObligations();
+  console.log("Resultados para LLC:", llcResults.length, llcResults.map(o => o.title));
+  
+  // Testar com C-Corp
+  document.getElementById("companyTypeSelect").value = "C-Corp";
+  const cCorpResults = getFilteredObligations();
+  console.log("Resultados para C-Corp:", cCorpResults.length, cCorpResults.map(o => o.title));
+  
+  // Voltar para todos
+  document.getElementById("companyTypeSelect").value = "ALL";
 }
 
 document.addEventListener("DOMContentLoaded", init);
