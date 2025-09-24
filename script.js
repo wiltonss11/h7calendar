@@ -246,7 +246,10 @@ function getFilteredObligations() {
   const query = document.getElementById("searchInput").value.trim().toLowerCase();
   const county = (document.getElementById("countyInput")?.value || '').trim().toLowerCase();
   const city = (document.getElementById("cityInput")?.value || '').trim().toLowerCase();
-  const companyType = document.getElementById("companyTypeSelect").value;
+  const companyTypeSelect = document.getElementById("companyTypeSelect");
+  const companyType = companyTypeSelect ? companyTypeSelect.value : "ALL";
+  
+  console.log("Valores dos filtros:", { state, includeFederal, includeState, query, county, city, companyType });
 
   const result = [];
   if (includeFederal) {
@@ -274,11 +277,15 @@ function getFilteredObligations() {
     filtered = filtered.filter(o => (o.city || '').toLowerCase().includes(city));
   }
   if (companyType && companyType !== "ALL") {
+    console.log("Filtrando por tipo de empresa:", companyType);
     filtered = filtered.filter(o => {
       if (!o.companyTypes || !Array.isArray(o.companyTypes)) {
+        console.log("Obrigação sem tipos:", o.title);
         return true; // Se não há tipos especificados, mostrar para todos
       }
-      return o.companyTypes.includes(companyType);
+      const hasType = o.companyTypes.includes(companyType);
+      console.log(`Obrigação: ${o.title}, Tipos: ${o.companyTypes.join(", ")}, Inclui ${companyType}: ${hasType}`);
+      return hasType;
     });
   }
 
