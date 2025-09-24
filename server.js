@@ -45,44 +45,44 @@ app.get('/api/obligations', (_req, res) => {
     const llinks = db.prepare('SELECT * FROM local_links').all();
     const lmonths = db.prepare('SELECT * FROM local_months').all();
 
-    // Função para obter tipos de empresa dos dados embutidos
-    const getCompanyTypes = (obligationId, scope) => {
-      // Dados embutidos com tipos de empresa
-      const embeddedObligations = {
-        federal: [
-          { id: "irs-1120", companyTypes: ["C-Corp"] },
-          { id: "irs-1065", companyTypes: ["Partnership", "LLC"] },
-          { id: "irs-941", companyTypes: ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"] },
-          { id: "irs-940", companyTypes: ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"] },
-          { id: "irs-1099", companyTypes: ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship", "Contractor"] },
-          { id: "irs-1120s", companyTypes: ["S-Corp"] },
-          { id: "irs-1120s-k1", companyTypes: ["S-Corp"] },
-          { id: "irs-1040-schedule-c", companyTypes: ["Sole Proprietorship"] },
-          { id: "irs-990", companyTypes: ["Non-Profit"] }
-        ],
-        state: [
-          { id: "ca-sales-tax", companyTypes: ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship"] },
-          { id: "ca-payroll", companyTypes: ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"] },
-          { id: "ny-sales-tax", companyTypes: ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship"] },
-          { id: "ny-withholding", companyTypes: ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"] },
-          { id: "tx-sales-tax", companyTypes: ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship"] }
-        ]
-      };
+    // Função para obter tipos de empresa baseada no título e conteúdo da obrigação
+    const getCompanyTypes = (obligation) => {
+      const title = (obligation.title || "").toLowerCase();
+      const who = (obligation.who || "").toLowerCase();
+      const id = (obligation.id || "").toLowerCase();
 
-      if (scope === 'federal') {
-        const obligation = embeddedObligations.federal.find(o => o.id === obligationId);
-        return obligation?.companyTypes || [];
-      }
-      if (scope === 'state') {
-        const obligation = embeddedObligations.state.find(o => o.id === obligationId);
-        return obligation?.companyTypes || [];
-      }
-      return [];
+      // Obrigações federais específicas
+      if (id.includes("irs-1120") && !id.includes("s")) return ["C-Corp"];
+      if (id.includes("irs-1120s")) return ["S-Corp"];
+      if (id.includes("irs-1065")) return ["Partnership", "LLC"];
+      if (id.includes("irs-941") || id.includes("irs-940")) return ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"];
+      if (id.includes("irs-1099")) return ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship", "Contractor"];
+      if (id.includes("irs-1040") || id.includes("schedule-c")) return ["Sole Proprietorship"];
+      if (id.includes("irs-990")) return ["Non-Profit"];
+      if (id.includes("boir")) return ["C-Corp", "S-Corp", "LLC", "Partnership"];
+
+      // Obrigações por palavras-chave no título
+      if (title.includes("corporation") || title.includes("corp")) return ["C-Corp"];
+      if (title.includes("partnership") || title.includes("llc")) return ["Partnership", "LLC"];
+      if (title.includes("payroll") || title.includes("withholding") || title.includes("employer")) return ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"];
+      if (title.includes("sales") || title.includes("tax")) return ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship"];
+      if (title.includes("unemployment") || title.includes("ui")) return ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"];
+      if (title.includes("annual report") || title.includes("biennial")) return ["C-Corp", "S-Corp", "LLC"];
+      if (title.includes("business license") || title.includes("license")) return ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship"];
+
+      // Obrigações por palavras-chave no campo "who"
+      if (who.includes("corporation") || who.includes("corp")) return ["C-Corp"];
+      if (who.includes("partnership") || who.includes("llc")) return ["Partnership", "LLC"];
+      if (who.includes("empregador") || who.includes("employer")) return ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"];
+      if (who.includes("varejista") || who.includes("vendedor")) return ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship"];
+
+      // Padrão geral para obrigações não identificadas
+      return ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship"];
     };
 
     const federalWith = federal.map(o => ({
       id: o.id, title: o.title, frequency: o.frequency, due: o.due, who: o.who, sporadic: !!o.sporadic,
-      companyTypes: getCompanyTypes(o.id, 'federal'),
+      companyTypes: getCompanyTypes(o),
       links: flinks.filter(l => l.obligation_id === o.id).map(l => ({ label: l.label, url: l.url })),
       months: fmonths.filter(m => m.obligation_id === o.id).map(m => m.month)
     }));
@@ -92,7 +92,7 @@ app.get('/api/obligations', (_req, res) => {
       if (!groupedStates[o.state]) groupedStates[o.state] = [];
       groupedStates[o.state].push({
         id: o.id, title: o.title, frequency: o.frequency, due: o.due, who: o.who, sporadic: !!o.sporadic,
-        companyTypes: getCompanyTypes(o.id, 'state'),
+        companyTypes: getCompanyTypes(o),
         links: slinks.filter(l => l.obligation_id === o.id).map(l => ({ label: l.label, url: l.url })),
         months: smonths.filter(m => m.obligation_id === o.id).map(m => m.month)
       });
@@ -112,7 +112,7 @@ app.get('/api/obligations', (_req, res) => {
         due: o.due,
         who: o.who,
         sporadic: !!o.sporadic,
-        companyTypes: getCompanyTypes(o.id, 'local'),
+        companyTypes: getCompanyTypes(o),
         links: llinks.filter(l => l.obligation_id === o.id).map(l => ({ label: l.label, url: l.url })),
         months: lmonths.filter(m => m.obligation_id === o.id).map(m => m.month)
       });
