@@ -68,19 +68,59 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); f
 
 .obligations-list { display: grid; grid-template-columns: 1fr; gap: 12px; }
 .obligations-calendar { display: grid; grid-template-columns: 1fr; gap: 12px; }
-.month { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
-.month-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.month h4 { margin: 0; font-size: 16px; color: var(--muted); font-weight: 600; }
-.month-count { font-size: 12px; color: var(--primary); background: rgba(11,91,211,0.1); padding: 2px 8px; border-radius: 12px; }
-.month .obligations { display: grid; gap: 8px; }
-.empty-month { color: var(--muted); font-style: italic; text-align: center; padding: 20px; margin: 0; }
-.obligation { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 12px; padding: 14px; display: grid; gap: 8px; }
+.month { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 12px; padding: 12px; transition: all 0.2s ease; }
+.month:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(11,91,211,0.1); }
+.month-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.month h4 { margin: 0; font-size: 14px; color: var(--text); font-weight: 600; }
+.month-count { font-size: 11px; color: var(--primary); background: rgba(11,91,211,0.15); padding: 3px 8px; border-radius: 12px; font-weight: 600; }
+.month .obligations { display: flex; flex-direction: column; gap: 4px; }
+.empty-month { color: var(--muted); font-style: italic; text-align: center; padding: 16px; margin: 0; font-size: 12px; }
+/* Design da Lista - Layout Horizontal Compacto */
+.obligation-list { display: flex; flex-direction: column; gap: 8px; }
+.obligation-list .obligation { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+.obligation-main { display: flex; align-items: center; gap: 12px; }
+.obligation-icon { flex-shrink: 0; width: 40px; height: 40px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+.obligation-icon .icon { font-size: 18px; }
+.obligation:hover .obligation-icon { transform: scale(1.05); }
+
+/* Cores específicas para tipos de obrigação */
+.obligation[data-type="corporate"] .obligation-icon { background: #3b82f6; }
+.obligation[data-type="partnership"] .obligation-icon { background: #10b981; }
+.obligation[data-type="payroll"] .obligation-icon { background: #f59e0b; }
+.obligation[data-type="tax"] .obligation-icon { background: #8b5cf6; }
+.obligation[data-type="nonprofit"] .obligation-icon { background: #ef4444; }
+.obligation[data-type="individual"] .obligation-icon { background: #06b6d4; }
+.obligation-content { flex: 1; min-width: 0; }
+.obligation-content .obligation-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; color: var(--text); }
+.obligation-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-bottom: 2px; }
+.obligation-who { font-size: 11px; color: var(--muted); }
+.obligation-actions { flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+.obligation-badges { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; }
+.obligation-links { display: flex; gap: 4px; }
+
+/* Design do Calendário - Layout Vertical Compacto */
+.obligation-calendar .obligation { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 6px; }
+.obligation-calendar .obligation-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.obligation-calendar .obligation-title { font-weight: 600; font-size: 13px; color: var(--text); }
+.obligation-calendar .obligation-meta { display: flex; flex-direction: column; gap: 2px; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.obligation-calendar .obligation-who { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+.obligation-calendar .obligation-links { display: flex; gap: 4px; }
+.obligation-calendar .obligation-links .link { font-size: 10px; }
+
+/* Badges e Links */
+.badge { font-size: 10px; padding: 2px 6px; border-radius: 12px; border: 1px solid var(--border); color: var(--muted); font-weight: 500; }
+.badge.federal { border-color: rgba(11,91,211,0.5); color: #bcd7ff; background: rgba(11,91,211,0.1); }
+.badge.state { border-color: rgba(16,185,129,0.5); color: #6ee7b7; background: rgba(16,185,129,0.1); }
+.badge.company { border-color: rgba(245,158,11,0.5); color: #fbbf24; background: rgba(245,158,11,0.1); }
+.badge.sporadic { border-color: rgba(245,158,11,0.6); color: #fbbf24; background: rgba(245,158,11,0.15); }
+.badge.local { border-color: rgba(139,92,246,0.5); color: #c4b5fd; background: rgba(139,92,246,0.1); }
+
+.link-btn { font-size: 11px; padding: 4px 8px; background: var(--primary); color: white; text-decoration: none; border-radius: 6px; font-weight: 500; }
+.link-btn:hover { background: var(--primary-700); }
+.link { font-size: 11px; color: var(--primary); text-decoration: none; }
+.link:hover { color: var(--primary-700); }
+
 .obligation.sporadic { border-color: rgba(245,158,11,0.6); box-shadow: inset 0 0 0 1px rgba(245,158,11,0.25); }
-.obligation-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.obligation-title { font-weight: 600; }
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { font-size: 12px; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
-.chip.federal { border-color: rgba(11,91,211,0.5); color: #bcd7ff; }
 .chip.state { border-color: rgba(245,158,11,0.45); color: #ffe1b0; }
 .muted { color: var(--muted); }
 .links { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -96,22 +136,40 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); f
 .credits a { color: #bcd7ff; text-decoration: none; }
 .credits a:hover { color: #fff; }
 
+/* Responsividade e Melhorias */
 @media (min-width: 768px) {
   .hero-inner { grid-template-columns: 1.2fr; }
   .controls { grid-template-columns: 1fr 1fr 1fr; }
   .grid-3 { grid-template-columns: repeat(3, 1fr); }
-  .obligations-list { grid-template-columns: 1fr 1fr; }
+  .obligations-list { grid-template-columns: 1fr; }
   .obligations-calendar { grid-template-columns: 1fr 1fr; }
+  
+  /* Melhorias para lista em desktop */
+  .obligation-list .obligation-main { gap: 16px; }
+  .obligation-content .obligation-title { font-size: 15px; }
+  .obligation-meta { font-size: 13px; }
+  .obligation-who { font-size: 12px; }
 }
 
 @media (min-width: 1024px) {
   .hero h1 { font-size: 42px; }
-  .obligations-list { grid-template-columns: 1fr 1fr 1fr; }
+  .obligations-list { grid-template-columns: 1fr; }
   .obligations-calendar { grid-template-columns: repeat(3, 1fr); }
+  
+  /* Melhorias para calendário em desktop */
+  .month { padding: 16px; }
+  .month-header { margin-bottom: 12px; }
+  .month h4 { font-size: 16px; }
+  .obligation-calendar .obligation-title { font-size: 14px; }
 }
 
 @media (min-width: 1200px) {
   .obligations-calendar { grid-template-columns: repeat(4, 1fr); }
+  
+  /* Layout otimizado para telas grandes */
+  .obligation-list .obligation-main { gap: 20px; }
+  .obligation-icon { width: 44px; height: 44px; }
+  .obligation-icon .icon { font-size: 20px; }
 }
 
 

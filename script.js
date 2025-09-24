@@ -306,52 +306,89 @@ function renderObligations() {
 function renderList(list) {
   const container = document.getElementById("obligationsList");
   container.innerHTML = "";
-  list.forEach(item => container.appendChild(buildObligationCard(item)));
+  list.forEach(item => container.appendChild(buildObligationCard(item, "list")));
 }
 
-function buildObligationCard(item) {
+function buildObligationCard(item, viewType = "list") {
   const card = document.createElement("div");
-  card.className = "obligation";
+  card.className = `obligation obligation-${viewType}`;
+  
+  // Determinar tipo para cores específicas
+  const getType = (item) => {
+    if (item.title.includes("1120")) return "corporate";
+    if (item.title.includes("1065")) return "partnership";
+    if (item.title.includes("941") || item.title.includes("940") || item.title.includes("Payroll")) return "payroll";
+    if (item.title.includes("Sales") || item.title.includes("Tax")) return "tax";
+    if (item.title.includes("990")) return "nonprofit";
+    if (item.title.includes("Schedule C")) return "individual";
+    return "default";
+  };
+  
+  card.setAttribute("data-type", getType(item));
 
-  const header = document.createElement("div");
-  header.className = "obligation-header";
-
-  const title = document.createElement("div");
-  title.className = "obligation-title";
-  title.textContent = item.title;
-  header.appendChild(title);
-
-  const chips = document.createElement("div");
-  chips.className = "chips";
-  const chipScope = document.createElement("span");
-  chipScope.className = `chip ${item.scope === "federal" ? "federal" : "state"}`;
-  chipScope.textContent = item.scope === "federal" ? "Federal" : `Estadual${item.state ? ` • ${item.state}` : ""}`;
-  chips.appendChild(chipScope);
-  if (Array.isArray(item.months) && item.months.length) {
-    const chipMonth = document.createElement("span");
-    chipMonth.className = "chip";
-    chipMonth.textContent = `Meses: ${item.months.join(", ")}`;
-    chips.appendChild(chipMonth);
+  if (viewType === "list") {
+    // Design compacto para lista - formato horizontal
+    const getIcon = (item) => {
+      if (item.scope === "federal") {
+        if (item.title.includes("1120")) return "🏢";
+        if (item.title.includes("1065")) return "🤝";
+        if (item.title.includes("941") || item.title.includes("940")) return "💰";
+        if (item.title.includes("1099")) return "📊";
+        if (item.title.includes("990")) return "🏛️";
+        if (item.title.includes("Schedule C")) return "👤";
+      }
+      if (item.title.includes("Sales") || item.title.includes("Tax")) return "🛒";
+      if (item.title.includes("Payroll") || item.title.includes("Withholding")) return "👥";
+      return "📋";
+    };
+    
+    card.innerHTML = `
+      <div class="obligation-main">
+        <div class="obligation-icon">
+          <span class="icon">${getIcon(item)}</span>
+        </div>
+        <div class="obligation-content">
+          <div class="obligation-title">${item.title}</div>
+          <div class="obligation-meta">
+            <span class="frequency">${item.frequency || ""}</span>
+            <span class="separator">•</span>
+            <span class="due">${item.due || ""}</span>
+          </div>
+          <div class="obligation-who">${item.who || ""}</div>
+        </div>
+        <div class="obligation-actions">
+          <div class="obligation-badges">
+            <span class="badge ${item.scope === "federal" ? "federal" : "state"}">
+              ${item.scope === "federal" ? "Federal" : `Estadual${item.state ? ` • ${item.state}` : ""}`}
+            </span>
+            ${item.companyTypes ? `<span class="badge company">${item.companyTypes.slice(0, 2).join(", ")}</span>` : ""}
+          </div>
+          <div class="obligation-links">
+            ${item.links ? item.links.map(l => `<a href="${l.url}" target="_blank" class="link-btn">${l.label}</a>`).join("") : ""}
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    // Design para calendário - formato vertical compacto
+    card.innerHTML = `
+      <div class="obligation-header">
+        <div class="obligation-title">${item.title}</div>
+        <div class="obligation-badges">
+          <span class="badge ${item.scope === "federal" ? "federal" : "state"}">
+            ${item.scope === "federal" ? "Federal" : `Estadual${item.state ? ` • ${item.state}` : ""}`}
+          </span>
+        </div>
+      </div>
+      <div class="obligation-meta">
+        <span class="frequency">${item.frequency || ""}</span>
+        <span class="due">${item.due || ""}</span>
+      </div>
+      <div class="obligation-who">${item.who || ""}</div>
+      ${item.links ? `<div class="obligation-links">${item.links.map(l => `<a href="${l.url}" target="_blank" class="link">${l.label}</a>`).join("")}</div>` : ""}
+    `;
   }
-  header.appendChild(chips);
 
-  const meta = document.createElement("div");
-  meta.className = "muted";
-  meta.textContent = `${item.frequency || ""} • ${item.due || ""} • ${item.who || ""}`;
-
-  const links = document.createElement("div");
-  links.className = "links";
-  if (Array.isArray(item.links)) {
-    item.links.forEach(l => {
-      const a = document.createElement("a");
-      a.href = l.url; a.target = "_blank"; a.rel = "noreferrer noopener"; a.className = "link"; a.textContent = l.label;
-      links.appendChild(a);
-    });
-  }
-
-  card.appendChild(header);
-  card.appendChild(meta);
-  card.appendChild(links);
   return card;
 }
 
@@ -404,7 +441,7 @@ function renderCalendar(list) {
       emptyMsg.textContent = "Nenhuma obrigação neste mês";
       wrap.appendChild(emptyMsg);
     } else {
-      groups[idx].forEach(item => wrap.appendChild(buildObligationCard(item)));
+      groups[idx].forEach(item => wrap.appendChild(buildObligationCard(item, "calendar")));
     }
     
     box.appendChild(header);
@@ -418,14 +455,14 @@ function renderSporadic(list) {
   if (!container) return;
   container.innerHTML = "";
   list.forEach(item => {
-    const card = buildObligationCard(item);
+    const card = buildObligationCard(item, "list");
     card.classList.add("sporadic");
-    const chips = card.querySelector('.chips');
-    if (chips) {
-      const chip = document.createElement('span');
-      chip.className = 'chip state';
-      chip.textContent = 'Esporádica';
-      chips.appendChild(chip);
+    const badges = card.querySelector('.obligation-badges');
+    if (badges) {
+      const badge = document.createElement('span');
+      badge.className = 'badge sporadic';
+      badge.textContent = 'Esporádica';
+      badges.appendChild(badge);
     }
     container.appendChild(card);
   });
@@ -443,13 +480,13 @@ function renderLocals() {
   if (county) list = list.filter(o => (o.county || '').toLowerCase().includes(county));
   if (city) list = list.filter(o => (o.city || '').toLowerCase().includes(city));
   list.forEach(item => {
-    const card = buildObligationCard(item);
-    const chips = card.querySelector('.chips');
-    if (chips) {
-      const chip = document.createElement('span');
-      chip.className = 'chip';
-      chip.textContent = item.level === 'county' ? `Condado${item.county ? ' • ' + item.county : ''}` : `Cidade${item.city ? ' • ' + item.city : ''}`;
-      chips.appendChild(chip);
+    const card = buildObligationCard(item, "list");
+    const badges = card.querySelector('.obligation-badges');
+    if (badges) {
+      const badge = document.createElement('span');
+      badge.className = 'badge local';
+      badge.textContent = item.level === 'county' ? `Condado${item.county ? ' • ' + item.county : ''}` : `Cidade${item.city ? ' • ' + item.city : ''}`;
+      badges.appendChild(badge);
     }
     container.appendChild(card);
   });
