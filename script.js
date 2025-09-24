@@ -28,6 +28,7 @@ let OBLIGATIONS = {
       due: "15º dia do 4º mês após o término do ano fiscal",
       who: "Corporations (C-Corp)",
       companyTypes: ["C-Corp"],
+      months: [4], // Abril
       links: [
         { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-form-1120" },
         { label: "Formulário", url: "https://www.irs.gov/pub/irs-pdf/f1120.pdf" }
@@ -40,6 +41,7 @@ let OBLIGATIONS = {
       due: "15º dia do 3º mês após o término do ano fiscal",
       who: "Parcerias (LLC tratada como partnership)",
       companyTypes: ["Partnership", "LLC"],
+      months: [3], // Março
       links: [
         { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-form-1065" },
         { label: "Formulário", url: "https://www.irs.gov/pub/irs-pdf/f1065.pdf" }
@@ -52,6 +54,7 @@ let OBLIGATIONS = {
       due: "Último dia do mês após o fim do trimestre (Jan–Mar: 30/04, etc.)",
       who: "Empregadores com retenção de payroll federal",
       companyTypes: ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"],
+      months: [4, 7, 10, 1], // Abril, Julho, Outubro, Janeiro
       links: [
         { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-form-941" },
         { label: "E-file", url: "https://www.irs.gov/payments" }
@@ -64,6 +67,7 @@ let OBLIGATIONS = {
       due: "31 de janeiro (ou 10 de fevereiro se todos os depósitos foram pontuais)",
       who: "Empregadores sujeitos a FUTA",
       companyTypes: ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"],
+      months: [1], // Janeiro
       links: [
         { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-form-940" }
       ]
@@ -75,6 +79,7 @@ let OBLIGATIONS = {
       due: "Envio a receptores até 31 de janeiro; e-file IRS até 31 de março (variável)",
       who: "Pagadores a contratados/juros/dividendos etc.",
       companyTypes: ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship", "Contractor"],
+      months: [1, 3], // Janeiro e Março
       links: [
         { label: "Visão geral", url: "https://www.irs.gov/forms-pubs/about-form-1099-misc" }
       ]
@@ -86,6 +91,7 @@ let OBLIGATIONS = {
       due: "15º dia do 3º mês após o término do ano fiscal",
       who: "S-Corporations",
       companyTypes: ["S-Corp"],
+      months: [3], // Março
       links: [
         { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-form-1120s" },
         { label: "Formulário", url: "https://www.irs.gov/pub/irs-pdf/f1120s.pdf" }
@@ -98,6 +104,7 @@ let OBLIGATIONS = {
       due: "Envio aos acionistas até 15º dia do 3º mês após fim do ano fiscal",
       who: "S-Corporations (para acionistas)",
       companyTypes: ["S-Corp"],
+      months: [3], // Março
       links: [
         { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-form-1120s" }
       ]
@@ -109,6 +116,7 @@ let OBLIGATIONS = {
       due: "15 de abril (ou prorrogação até 15 de outubro)",
       who: "Sole Proprietorships e atividades comerciais",
       companyTypes: ["Sole Proprietorship"],
+      months: [4, 10], // Abril e Outubro (prorrogação)
       links: [
         { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-schedule-c-form-1040" }
       ]
@@ -120,6 +128,7 @@ let OBLIGATIONS = {
       due: "15º dia do 5º mês após o fim do ano fiscal",
       who: "Organizações isentas de impostos",
       companyTypes: ["Non-Profit"],
+      months: [5], // Maio
       links: [
         { label: "Instruções", url: "https://www.irs.gov/forms-pubs/about-form-990" }
       ]
@@ -134,6 +143,7 @@ let OBLIGATIONS = {
         due: "Geralmente último dia do mês seguinte",
         who: "Varejistas e vendedores sujeitos a sales/use tax",
         companyTypes: ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship"],
+        months: [1,2,3,4,5,6,7,8,9,10,11,12], // Mensal
         links: [
           { label: "CDTFA eFile", url: "https://onlineservices.cdtfa.ca.gov/" },
           { label: "Guia", url: "https://www.cdtfa.ca.gov/taxes-and-fees/sut-programs.htm" }
@@ -146,6 +156,7 @@ let OBLIGATIONS = {
         due: "Conforme calendário EDD",
         who: "Empregadores com retenção estadual",
         companyTypes: ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"],
+        months: [1,2,3,4,5,6,7,8,9,10,11,12], // Mensal
         links: [
           { label: "EDD e-Services", url: "https://edd.ca.gov/en/e-Services_for_Business/" }
         ]
@@ -349,6 +360,7 @@ function renderCalendar(list) {
   cal.innerHTML = "";
   const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
   const groups = Array.from({ length: 12 }, () => []);
+  
   list.forEach(item => {
     if (Array.isArray(item.months) && item.months.length) {
       item.months.forEach(m => {
@@ -362,6 +374,9 @@ function renderCalendar(list) {
         for (let m = 1; m <= 12; m++) groups[m - 1].push(item);
       } else if ((item.frequency || "").toLowerCase().includes("anual")) {
         groups[11].push(item); // Dezembro por padrão
+      } else {
+        // Se não tem frequência específica, mostrar em todos os meses
+        for (let m = 1; m <= 12; m++) groups[m - 1].push(item);
       }
     }
   });
@@ -369,12 +384,30 @@ function renderCalendar(list) {
   months.forEach((label, idx) => {
     const box = document.createElement("div");
     box.className = "month";
+    
+    const header = document.createElement("div");
+    header.className = "month-header";
     const h4 = document.createElement("h4");
     h4.textContent = label;
+    const count = document.createElement("span");
+    count.className = "month-count";
+    count.textContent = `(${groups[idx].length})`;
+    header.appendChild(h4);
+    header.appendChild(count);
+    
     const wrap = document.createElement("div");
     wrap.className = "obligations";
-    groups[idx].forEach(item => wrap.appendChild(buildObligationCard(item)));
-    box.appendChild(h4);
+    
+    if (groups[idx].length === 0) {
+      const emptyMsg = document.createElement("p");
+      emptyMsg.className = "empty-month";
+      emptyMsg.textContent = "Nenhuma obrigação neste mês";
+      wrap.appendChild(emptyMsg);
+    } else {
+      groups[idx].forEach(item => wrap.appendChild(buildObligationCard(item)));
+    }
+    
+    box.appendChild(header);
     box.appendChild(wrap);
     cal.appendChild(box);
   });
