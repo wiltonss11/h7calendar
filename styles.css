@@ -45,6 +45,7 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); f
 .subtitle { color: var(--muted); margin: 0 0 20px; }
 
 .controls { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.control-row { display: grid; grid-template-columns: 1fr; gap: 12px; }
 .control-group { display: flex; flex-direction: column; gap: 8px; }
 .control-group.inline { flex-direction: row; align-items: center; gap: 16px; }
 .select, .input { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 12px; outline: none; }
@@ -140,6 +141,7 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); f
 @media (min-width: 768px) {
   .hero-inner { grid-template-columns: 1.2fr; }
   .controls { grid-template-columns: 1fr 1fr 1fr; }
+  .control-row { grid-template-columns: 1fr 1fr; }
   .grid-3 { grid-template-columns: repeat(3, 1fr); }
   .obligations-list { grid-template-columns: 1fr; }
   .obligations-calendar { grid-template-columns: 1fr 1fr; }
