@@ -275,12 +275,18 @@ function getFilteredObligations() {
     filtered = filtered.filter(o => (o.city || '').toLowerCase().includes(city));
   }
   if (companyType && companyType !== "ALL") {
+    console.log("Filtrando por:", companyType);
+    console.log("Obrigações antes do filtro:", filtered.length);
     filtered = filtered.filter(o => {
       if (!o.companyTypes || !Array.isArray(o.companyTypes)) {
+        console.log("Obrigação sem tipos:", o.title);
         return false; // Se não há tipos especificados, não mostrar
       }
-      return o.companyTypes.includes(companyType);
+      const hasType = o.companyTypes.includes(companyType);
+      console.log(`${o.title}: tipos ${o.companyTypes.join(", ")}, inclui ${companyType}? ${hasType}`);
+      return hasType;
     });
+    console.log("Obrigações depois do filtro:", filtered.length);
   }
 
   return filtered;
