@@ -1,0 +1,141 @@
+{
+  "CA": [
+    {
+      "id": "CA-LA-bus-license",
+      "level": "city",
+      "county": null,
+      "city": "Los Angeles",
+      "title": "City Business License Tax",
+      "frequency": "Anual",
+      "due": "Conforme calendário municipal",
+      "who": "Negócios na cidade",
+      "sporadic": false,
+      "companyTypes": [
+        "C-Corp",
+        "S-Corp",
+        "LLC",
+        "Partnership",
+        "Sole Proprietorship"
+      ],
+      "links": [
+        {
+          "label": "Portal local",
+          "url": "#"
+        }
+      ],
+      "months": [
+        1
+      ]
+    },
+    {
+      "id": "CA-LA-sut",
+      "level": "county",
+      "county": "Los Angeles County",
+      "city": null,
+      "title": "County Sales and Use Tax Surtax",
+      "frequency": "Mensal",
+      "due": "Fim do mês seguinte",
+      "who": "Varejistas no condado",
+      "sporadic": false,
+      "companyTypes": [
+        "C-Corp",
+        "S-Corp",
+        "LLC",
+        "Partnership",
+        "Sole Proprietorship"
+      ],
+      "links": [
+        {
+          "label": "Portal local",
+          "url": "#"
+        }
+      ],
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ]
+    }
+  ],
+  "FL": [
+    {
+      "id": "FL-MD-sut",
+      "level": "county",
+      "county": "Miami-Dade County",
+      "city": null,
+      "title": "Discretionary Sales Surtax",
+      "frequency": "Mensal",
+      "due": "Fim do mês seguinte",
+      "who": "Varejistas no condado",
+      "sporadic": false,
+      "companyTypes": [
+        "C-Corp",
+        "S-Corp",
+        "LLC",
+        "Partnership",
+        "Sole Proprietorship"
+      ],
+      "links": [
+        {
+          "label": "Portal local",
+          "url": "#"
+        }
+      ],
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ]
+    }
+  ],
+  "NY": [
+    {
+      "id": "NY-NYC-bus",
+      "level": "city",
+      "county": null,
+      "city": "New York City",
+      "title": "NYC Business Taxes (GCT/UBT)",
+      "frequency": "Anual/Estimativas",
+      "due": "Conforme NYC DOF",
+      "who": "Negócios em NYC",
+      "sporadic": false,
+      "companyTypes": [
+        "C-Corp",
+        "S-Corp",
+        "LLC",
+        "Partnership",
+        "Sole Proprietorship"
+      ],
+      "links": [
+        {
+          "label": "Portal local",
+          "url": "#"
+        }
+      ],
+      "months": [
+        4,
+        6,
+        9,
+        12
+      ]
+    }
+  ]
+}
