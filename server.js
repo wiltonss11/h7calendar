@@ -45,8 +45,44 @@ app.get('/api/obligations', (_req, res) => {
     const llinks = db.prepare('SELECT * FROM local_links').all();
     const lmonths = db.prepare('SELECT * FROM local_months').all();
 
+    // Função para obter tipos de empresa dos dados embutidos
+    const getCompanyTypes = (obligationId, scope) => {
+      // Dados embutidos com tipos de empresa
+      const embeddedObligations = {
+        federal: [
+          { id: "irs-1120", companyTypes: ["C-Corp"] },
+          { id: "irs-1065", companyTypes: ["Partnership", "LLC"] },
+          { id: "irs-941", companyTypes: ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"] },
+          { id: "irs-940", companyTypes: ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"] },
+          { id: "irs-1099", companyTypes: ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship", "Contractor"] },
+          { id: "irs-1120s", companyTypes: ["S-Corp"] },
+          { id: "irs-1120s-k1", companyTypes: ["S-Corp"] },
+          { id: "irs-1040-schedule-c", companyTypes: ["Sole Proprietorship"] },
+          { id: "irs-990", companyTypes: ["Non-Profit"] }
+        ],
+        state: [
+          { id: "ca-sales-tax", companyTypes: ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship"] },
+          { id: "ca-payroll", companyTypes: ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"] },
+          { id: "ny-sales-tax", companyTypes: ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship"] },
+          { id: "ny-withholding", companyTypes: ["Employer", "C-Corp", "S-Corp", "LLC", "Partnership"] },
+          { id: "tx-sales-tax", companyTypes: ["C-Corp", "S-Corp", "LLC", "Partnership", "Sole Proprietorship"] }
+        ]
+      };
+
+      if (scope === 'federal') {
+        const obligation = embeddedObligations.federal.find(o => o.id === obligationId);
+        return obligation?.companyTypes || [];
+      }
+      if (scope === 'state') {
+        const obligation = embeddedObligations.state.find(o => o.id === obligationId);
+        return obligation?.companyTypes || [];
+      }
+      return [];
+    };
+
     const federalWith = federal.map(o => ({
       id: o.id, title: o.title, frequency: o.frequency, due: o.due, who: o.who, sporadic: !!o.sporadic,
+      companyTypes: getCompanyTypes(o.id, 'federal'),
       links: flinks.filter(l => l.obligation_id === o.id).map(l => ({ label: l.label, url: l.url })),
       months: fmonths.filter(m => m.obligation_id === o.id).map(m => m.month)
     }));
@@ -56,6 +92,7 @@ app.get('/api/obligations', (_req, res) => {
       if (!groupedStates[o.state]) groupedStates[o.state] = [];
       groupedStates[o.state].push({
         id: o.id, title: o.title, frequency: o.frequency, due: o.due, who: o.who, sporadic: !!o.sporadic,
+        companyTypes: getCompanyTypes(o.id, 'state'),
         links: slinks.filter(l => l.obligation_id === o.id).map(l => ({ label: l.label, url: l.url })),
         months: smonths.filter(m => m.obligation_id === o.id).map(m => m.month)
       });
@@ -75,6 +112,7 @@ app.get('/api/obligations', (_req, res) => {
         due: o.due,
         who: o.who,
         sporadic: !!o.sporadic,
+        companyTypes: getCompanyTypes(o.id, 'local'),
         links: llinks.filter(l => l.obligation_id === o.id).map(l => ({ label: l.label, url: l.url })),
         months: lmonths.filter(m => m.obligation_id === o.id).map(m => m.month)
       });
