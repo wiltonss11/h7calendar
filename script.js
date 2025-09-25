@@ -5526,7 +5526,7 @@ async function loadObligationsJSON() {
 }
 
 function populateStateSelect() {
-  console.log("populateStateSelect chamada");
+  console.log("populateStateSelect chamada - DEBUG GITHUB PAGES");
   const select = document.getElementById("stateSelect");
   if (!select) {
     console.error("Elemento stateSelect não encontrado!");
